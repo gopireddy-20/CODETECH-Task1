@@ -9,16 +9,16 @@
 
 # **Project Overview**
 
-### **Project: Exploratory Java Programming On Online Banking System**
-#### **Objective**
+## **Project: Exploratory Java Programming On Online Banking System**
+## **Objective**
 The project is a console-based online banking system implemented in Java. It allows users to perform various banking operations such as creating accounts, depositing and withdrawing funds, transferring money between accounts, viewing transaction history, and managing personal information.
 
-#### **Key Components**
+## **Key Components**
 1. **Account Class**: Represents a bank account with methods to handle transactions and maintain transaction history.
 2. **User Class**: Represents a bank user with methods for managing accounts and authenticating user credentials.
 3. **BankingSystem Class**: Manages the overall application flow, user interactions, and operations related to banking and user management.
 
-#### **Functionality**
+## **Functionality**
 
 1. **User Management**
    - **Register**: Users can register by providing a username and password. Existing usernames are not allowed.
@@ -37,7 +37,7 @@ The project is a console-based online banking system implemented in Java. It all
    - **Change Password**: Users can update their account password.
    - **Logout**: Users can log out from their current session.
 
-#### **Classes and Their Responsibilities**
+## **Classes and Their Responsibilities**
 
 1. **Account Class**
    - **Attributes**: 
@@ -74,19 +74,19 @@ The project is a console-based online banking system implemented in Java. It all
      - `managePersonalInfo(User user)`: Allows users to change their password or log out.
      - `start()`: Main loop for the application, handling user input and directing flow based on user choices.
 
-#### **Project Execution**
+## **Project Execution**
 
 1. **Initialization**: When the program starts, the user is presented with options to either register, log in, or exit.
 2. **User Interaction**: After logging in, users can create and manage accounts, perform transactions, and view transaction histories.
 3. **Application Flow**: The `start()` method controls the flow of the application, repeatedly prompting the user for actions and executing the corresponding methods.
 
-#### **Technical Details**
+## **Technical Details**
 
 - **Input Handling**: Uses `Scanner` for reading user inputs.
 - **Transaction Management**: Transactions are recorded in the account’s transaction history list.
 - **Data Storage**: User data and accounts are stored in memory using Java collections (`HashMap` and `ArrayList`). Persistent storage (e.g., databases) is not implemented.
 
-#### **Limitations**
+## **Limitations**
 
 - **Security**: No encryption or hashing for passwords. In a real-world scenario, passwords should be securely hashed and stored.
 - **Persistence**: Data is not saved between program runs. Adding persistent storage would require database integration.
