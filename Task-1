@@ -1,0 +1,294 @@
+//This code allow users to create accounts, deposit and withdraw funds, transfer money between
+accounts, view transaction history, and manage personal information in online banking system
+
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class BankingSystem {
+
+    // Account class
+    static class Account {
+        private String accountNumber;
+        private double balance;
+        private List<String> transactionHistory;
+
+        public Account(String accountNumber) {
+            this.accountNumber = accountNumber;
+            this.balance = 0.0;
+            this.transactionHistory = new ArrayList<>();
+        }
+
+        public String getAccountNumber() {
+            return accountNumber;
+        }
+
+        public double getBalance() {
+            return balance;
+        }
+
+        public List<String> getTransactionHistory() {
+            return transactionHistory;
+        }
+
+        public void deposit(double amount) {
+            if (amount > 0) {
+                balance += amount;
+                transactionHistory.add("Deposited: $" + amount);
+            } else {
+                System.out.println("Deposit amount must be positive.");
+            }
+        }
+
+        public void withdraw(double amount) {
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                transactionHistory.add("Withdrew: $" + amount);
+            } else {
+                System.out.println("Invalid withdrawal amount.");
+            }
+        }
+
+        public void transfer(Account targetAccount, double amount) {
+            if (amount > 0 && amount <= balance) {
+                withdraw(amount);
+                targetAccount.deposit(amount);
+                transactionHistory.add("Transferred: $" + amount + " to account " + targetAccount.getAccountNumber());
+            } else {
+                System.out.println("Invalid transfer amount.");
+            }
+        }
+    }
+
+    // User class
+    static class User {
+        private String username;
+        private String password;
+        private List<Account> accounts;
+
+        public User(String username, String password) {
+            this.username = username;
+            this.password = password;
+            this.accounts = new ArrayList<>();
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public boolean validatePassword(String password) {
+            return this.password.equals(password);
+        }
+
+        public void addAccount(Account account) {
+            accounts.add(account);
+        }
+
+        public Account getAccount(String accountNumber) {
+            for (Account account : accounts) {
+                if (account.getAccountNumber().equals(accountNumber)) {
+                    return account;
+                }
+            }
+            return null;
+        }
+
+        public List<Account> getAccounts() {
+            return accounts;
+        }
+    }
+
+    // BankingSystem class
+    private Map<String, User> users;
+    private Scanner scanner;
+
+    public BankingSystem() {
+        this.users = new HashMap<>();
+        this.scanner = new Scanner(System.in);
+    }
+
+    public void registerUser() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        if (users.containsKey(username)) {
+            System.out.println("Username already exists.");
+        } else {
+            users.put(username, new User(username, password));
+            System.out.println("User registered successfully.");
+        }
+    }
+
+    public User loginUser() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        User user = users.get(username);
+        if (user != null && user.validatePassword(password)) {
+            return user;
+        } else {
+            System.out.println("Invalid credentials.");
+            return null;
+        }
+    }
+
+    public void createAccount(User user) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        if (user.getAccount(accountNumber) != null) {
+            System.out.println("Account number already exists.");
+        } else {
+            user.addAccount(new Account(accountNumber));
+            System.out.println("Account created successfully.");
+        }
+    }
+
+    public void deposit(User user) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        Account account = user.getAccount(accountNumber);
+        if (account != null) {
+            System.out.print("Enter amount to deposit: ");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); // consume newline
+            account.deposit(amount);
+            System.out.println("Deposited successfully.");
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+    public void withdraw(User user) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        Account account = user.getAccount(accountNumber);
+        if (account != null) {
+            System.out.print("Enter amount to withdraw: ");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); // consume newline
+            account.withdraw(amount);
+            System.out.println("Withdrawn successfully.");
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+    public void transfer(User user) {
+        System.out.print("Enter source account number: ");
+        String sourceAccountNumber = scanner.nextLine();
+        Account sourceAccount = user.getAccount(sourceAccountNumber);
+        if (sourceAccount != null) {
+            System.out.print("Enter target account number: ");
+            String targetAccountNumber = scanner.nextLine();
+            Account targetAccount = user.getAccount(targetAccountNumber);
+            if (targetAccount != null) {
+                System.out.print("Enter amount to transfer: ");
+                double amount = scanner.nextDouble();
+                scanner.nextLine(); // consume newline
+                sourceAccount.transfer(targetAccount, amount);
+                System.out.println("Transferred successfully.");
+            } else {
+                System.out.println("Target account not found.");
+            }
+        } else {
+            System.out.println("Source account not found.");
+        }
+    }
+
+    public void viewTransactionHistory(User user) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        Account account = user.getAccount(accountNumber);
+        if (account != null) {
+            System.out.println("Transaction History:");
+            for (String transaction : account.getTransactionHistory()) {
+                System.out.println(transaction);
+            }
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+    public void managePersonalInfo(User user) {
+        System.out.println("1. Change password");
+        System.out.println("2. Logout");
+        System.out.print("Choose an option: ");
+        int option = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        if (option == 1) {
+            System.out.print("Enter new password: ");
+            String newPassword = scanner.nextLine();
+            user.password = newPassword; // directly modify the password
+            System.out.println("Password changed successfully.");
+        } else if (option == 2) {
+            System.out.println("Logging out...");
+        } else {
+            System.out.println("Invalid option.");
+        }
+    }
+
+    public void start() {
+        while (true) {
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+            int option = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            if (option == 1) {
+                registerUser();
+            } else if (option == 2) {
+                User user = loginUser();
+                if (user != null) {
+                    while (true) {
+                        System.out.println("1. Create Account");
+                        System.out.println("2. Deposit");
+                        System.out.println("3. Withdraw");
+                        System.out.println("4. Transfer");
+                        System.out.println("5. View Transaction History");
+                        System.out.println("6. Manage Personal Information");
+                        System.out.println("7. Logout");
+                        System.out.print("Choose an option: ");
+                        int userOption = scanner.nextInt();
+                        scanner.nextLine(); // consume newline
+
+                        if (userOption == 1) {
+                            createAccount(user);
+                        } else if (userOption == 2) {
+                            deposit(user);
+                        } else if (userOption == 3) {
+                            withdraw(user);
+                        } else if (userOption == 4) {
+                            transfer(user);
+                        } else if (userOption == 5) {
+                            viewTransactionHistory(user);
+                        } else if (userOption == 6) {
+                            managePersonalInfo(user);
+                        } else if (userOption == 7) {
+                            break;
+                        } else {
+                            System.out.println("Invalid option.");
+                        }
+                    }
+                }
+            } else if (option == 3) {
+                System.out.println("Exiting...");
+                break;
+            } else {
+                System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new BankingSystem().start();
+    }
+}
